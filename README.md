@@ -1,5 +1,5 @@
-# Ex4
-Welcome to the "Pacman Inavaion" game!!!
+# Pacman Invasion
+Welcome to the "Pacman Invasion" game!!!
 
 Pacmans and Ghosts invaded to Ariel University !!! HELP US !!!
 
