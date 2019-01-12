@@ -25,7 +25,7 @@ public class Map {
 	private static final double mapLongitude = 32.101858;
 	private static final double WIDTH=mapLatitude-mapLatitudeStart;
 	private static final double HEIGHT=mapLongitudeStart-mapLongitude;
-	static MyCoords mycoords=new MyCoords();
+	//static MyCoords mycoords=new MyCoords();
 
 	// The images of the map. packmen and fruits
 	public static BufferedImage img;
@@ -107,7 +107,7 @@ public class Map {
 	public static double[] azimuth_elevation_dist(Point3D a_pixle,Point3D b_pixle) {
 		Point3D coord_a=new Point3D(PixeltoCoordanite(a_pixle));
 		Point3D coord_b=new Point3D(PixeltoCoordanite(b_pixle));
-		return  mycoords.azimuth_elevation_dist(coord_a, coord_b);
+		return  MyCoords.azimuth_elevation_dist(coord_a, coord_b);
 	}
 
 }

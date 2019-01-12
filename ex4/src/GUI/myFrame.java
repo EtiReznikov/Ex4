@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Algorithm.Algo;
 import Algorithm.Auto;
+import GIS.Path;
 import GameObjects.Fruit;
 import Geom.Point3D;
 import Robot.Play;
@@ -160,29 +161,7 @@ public class myFrame  extends JFrame implements MouseListener{
 			public void actionPerformed(ActionEvent e) {
 				play.start();
 				GameStatus=3;
-				//	repaint();
 				threadGame();
-				//	repaint();
-				/*			
-				ObjectCoponent drawObject= new ObjectCoponent();
-
-				Thread thread=new Thread() {
-					public void run() {
-						while (play.isRuning()) {
-							play.rotate(move[0]); 
-							drawObject.paintComponent(_paper);
-							try {
-								sleep(500);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					};
-				};
-				thread.start();
-			}
-				 */
 			}
 
 		});
@@ -210,56 +189,12 @@ public class myFrame  extends JFrame implements MouseListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Auto automatic = new Auto (play);
-
-				//	System.out.println(play);
-				automatic.setstart();
-				System.out.println();
-				for( String s:play.getBoard())
-					System.out.println(s);
-			//	play=automatic.getPlay(); 
-				//Point3D player=new Point3D (Map.getPositionOnScreen(automatic.getPlayer().getLocation()));
-				//X=(int)player.x();
-				//Y=(int)player.y();
-				repaint();
-
-				//	play=automatic.getPlay();
+					automatic.setstart();
+			//	automatic.getPlayer().setLocation(new Point3D(32.10324747663552,35.20376771528262));
+			//	play.setInitLocation(32.10324747663552,35.20376771528262);
 				play.start();
-				threadGame();
-				while (play.isRuning()) {
-				angle=30;
-				//AutomaticGame(automatic);
-				//		play=automatic.play;
-				//	play=automatic.getPlay();
-
-					//	repaint();
-				}
-
-				//	play=automatic.getPlay();
-
-				//repaint();
+				AutothreadGame(automatic);
 			}
-
-			/*repaint();
-				boolean flag=true;
-				String player="";
-				while (flag) {
-					for (String obj: play.getBoard()) {
-						String[] data=obj.split(",");
-						if (data[0]=="M") {
-							player=obj;
-							flag=false;
-						}
-					}
-				}
-			 */
-			//play.start();
-			/*
-				while (play.isRuning()) {
-				//	player= automatic.closest(player);
-					repaint();
-				}
-			 */
-			//	}
 		});
 
 
@@ -375,7 +310,7 @@ public class myFrame  extends JFrame implements MouseListener{
 					repaint();
 
 					try {
-						Thread.sleep(200);
+						Thread.sleep(300);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
@@ -386,45 +321,61 @@ public class myFrame  extends JFrame implements MouseListener{
 		thread.start();
 		repaint();
 	}
+	public void AutothreadGame(Auto automatic) {
 
-	public void AutomaticGame(Auto automatic) {
-		String [] data;
-		double velocity=automatic.getPlayer().getVeloctiy();
-		ArrayList<String> shortestPath=automatic.closestFruit(automatic.getPlayer().getLocation(), velocity);
-		String[] fruit=shortestPath.get(shortestPath.size()-1).split(",");
-		Fruit fruitlocation=new Fruit (new Point3D (Double.parseDouble(fruit[0]), Double.parseDouble(fruit[1])),Integer.parseInt( fruit[3]));
-		//	System.out.println(automatic.getFruits().isEmpty());
-		while (automatic.getFruits().contains(fruitlocation)){
-			System.out.println(true);
-			for(int i=0;i<shortestPath.size();i++) {
-				//		System.out.println(true);
-				String[] nextpoint=shortestPath.get(i).split(",");
-				double[] azimuth_elevation_dist=MyCoords.azimuth_elevation_dist
-						(automatic.getPlayer().getLocation(), new Point3D (Double.parseDouble(nextpoint[0]),Double.parseDouble(nextpoint[1])));
-				while (azimuth_elevation_dist[2]>automatic.getPlayer().getRadius()) {
-					azimuth_elevation_dist=MyCoords.azimuth_elevation_dist
-							(automatic.getPlayer().getLocation(), new Point3D (Double.parseDouble(nextpoint[0]),Double.parseDouble(nextpoint[1])));
-					angle=azimuth_elevation_dist[0];
-					System.out.println("angle:"+angle);
-
-					automatic.getFruits().removeAll(automatic.getFruits());
-					for (String obj: play.getBoard()) {
-						data=obj.split(",");
-						if (data[0].equals("M")){
-							automatic.getPlayer().setLocation(new Point3D(Double.parseDouble(data[2]), Double.parseDouble(data [3])));
-						}
-						else if (data[0].equals("F")) {
-							automatic.getFruits().add(new Fruit(new Point3D(Double.parseDouble(data[2]),Double.parseDouble(data[3])), Integer.parseInt(data[1])));
+		Thread thread= new Thread() {
+			@Override
+			public void run() {
+				while (play.isRuning()) {
+					ArrayList<String> path = new ArrayList<String>();
+					while(!automatic.getFruits().isEmpty()) {
+						//		path=automatic.closestFruit(automatic.getPlayer().getLocation(),automatic.getPlayer().getVeloctiy());
+						path.add("32.1031298252632,35.2094637506155,0.0,8");
+						path.add("32.10431365,35.2089152,0.0,2");
+						path.add("32.1045535405543,35.2092014005389,0.0,3");
+						path.add("32.1042197757974,35.209622750662,0.0,4");
+						path.add("32.104292786838,35.209082150504,0.0,5");
+						path.add("32.1044805295137,35.2074683000325,0.0,5");
+						path.add("32.1042145607231,35.2078578501463,0.0,6");
+						path.add("32.1030255237767,35.2069912998931,0.0,7");
+					//	String [] nextFruit=path.get(path.size()-1).split(",");
+					//	Fruit fruit=new Fruit(path.get(path.size()-1))
+						
+					
+						for (int i=0; i<path.size(); i++) {
+							String []nextpoint= path.get(i).split(",");
+							
+							double [] azimuth_elevation_dist=MyCoords.azimuth_elevation_dist
+									(automatic.getPlayer().getLocation(), new Point3D(Double.parseDouble(nextpoint[0]),Double.parseDouble(nextpoint[1])));
+							angle=azimuth_elevation_dist[0];
+							while (azimuth_elevation_dist[2]>automatic.getPlayer().getRadius()) {
+								play.rotate(angle);
+								repaint();
+								try {
+									Thread.sleep(300);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
+								}
+								automatic.getFruits().clear();
+								for (String obj:play.getBoard()) {
+									String data[]= obj.split(",");
+									if (data[0].equals("M"))
+										automatic.getPlayer().setLocation(new Point3D(Double.parseDouble(data[2]),Double.parseDouble(data[3])));
+									else if (data[0].equals("F"))
+										automatic.getFruits().add(new Fruit(new Point3D(Double.parseDouble(data[2]),Double.parseDouble(data[3])),Integer.parseInt(data[1])));
+								}
+								azimuth_elevation_dist=MyCoords.azimuth_elevation_dist
+										(automatic.getPlayer().getLocation(), new Point3D(Double.parseDouble(nextpoint[0]),Double.parseDouble(nextpoint[1])));
+							}	
 						}
 					}
-					automatic.getPlayer().setLocation(new Point3D (Double.parseDouble(nextpoint[0]),Double.parseDouble(nextpoint[1])));	
-					play=automatic.play;
-					play.start();
-					//	play.rotate(angle);
 				}
 			}
-		}
+		};
+		thread.start();
+		repaint();
 	}
+
 
 
 	@Override
@@ -470,9 +421,6 @@ public class myFrame  extends JFrame implements MouseListener{
 
 	public static void main(String[] args) {
 		myFrame frame = new myFrame();
-		//frame.setBounds(0, 0, 1433, 642);
-		//frame.setSize(1433, 642);
-		//frame.setBounds(0, 0, 700, 700);
 
 		frame.setBounds(0, 0,  frame.width, frame.height);
 		frame.createGui();

@@ -36,32 +36,50 @@ public class Boxinfo {
 	public static ArrayList<ArrayList<Point3D>> pointCanSee(ArrayList <Point3D> points,  ArrayList<Point3D []> boxes){
 		ArrayList<ArrayList<Point3D>> neighbors= new ArrayList<ArrayList<Point3D>>();
 		int j=0;
+		int notvaild=-1;
 		for (Point3D point:points) {
 			ArrayList<Point3D> pointNeighbors=	new ArrayList<Point3D>();
 			pointNeighbors.add(point);
 			j++;
 			for (Point3D [] corners: boxes) {
+				if (point.equals(corners[0]))
+						  notvaild=2;
+				else if (point.equals(corners[2]))
+						 notvaild=0;
+				else if (point.equals(corners[3]))
+					 notvaild=1;
+				else if (point.equals(corners[1]))
+					 notvaild=3;
 				for (int i=0; i<corners.length; i++) {
-					if (!point.equals(corners[i]) && points.contains(corners[i])) {
+					if (!point.equals(corners[i]) && points.contains(corners[i]) && (i!=notvaild)) {
 						if (Auto.blockedbybox(point, corners[i], boxes))
 							pointNeighbors.add(corners[i]);
 					}
 				}
 			}
+			notvaild=-1;
 			neighbors.add(pointNeighbors);
 		}
 		return neighbors;
 	}
 
 	public  void addPointstoNeighbors(Point3D source, Point3D target ){
-		this.neighbors.add(new ArrayList<Point3D>());
-		this.neighbors.get(this.neighbors.size()-1).add(source);
-		for (Point3D [] corners: boxes) {
-			for (int i=0; i<corners.length; i++) {
+	//	this.neighbors.add(new ArrayList<Point3D>());
+	//	this.neighbors.get(this.neighbors.size()-1).add(source);
+		ArrayList<Point3D> pointNeighbors=	new ArrayList<Point3D>();
+		pointNeighbors.add(source);
+		for (Point3D point: points)
+			if (Auto.blockedbybox(source, point, boxes))
+				pointNeighbors.add(point);
+		neighbors.add(pointNeighbors);
+			/*
+		//for (Point3D [] corners: boxes) {
+		//	for (int i=0; i<corners.length; i++) {
 				if (Auto.blockedbybox(source, corners[i], boxes))
 					neighbors.get(this.neighbors.size()-1).add(corners[i]); 
-			}
-		}	
+		//	}
+		//}	
+		*/
 		this.neighbors.add(new ArrayList<Point3D>());
 		this.neighbors.get(this.neighbors.size()-1).add(target);
 		for (Point3D [] corners: boxes) {

@@ -4,6 +4,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.Box;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import GameObjects.Fruit;
 import GameObjects.Player;
 import Geom.Point3D;
@@ -23,13 +27,34 @@ public class Auto {
 	private Player player;
 
 	public static void main(String[] args) {
+/*
+		//	Play play=new Play("C:\\Users\\etire\\OneDrive\\מסמכים\\data\\Ex4.csv");
+			Play play=new Play("C:\\Users\\etire\\OneDrive\\מסמכים\\data\\Ex4_OOP_example2.csv");
 
-		//	Play play=new Play("C:\\Users\\etire\\OneDrive\\מסמכים\\data\\Ex4_OOP_example8.csv");
-		//	Auto auto=new Auto(play);
+			Auto auto=new Auto(play);
+			auto.boxinfo.addPointstoNeighbors(new Point3D(32.10324747663552,35.20376771528262), new Point3D (32.10517186915888,35.208645482902995));
+			for (ArrayList<Point3D> point: auto.boxinfo.neighbors) {
+				for (Point3D p: point)
+					System.out.println(p.toString());
+				System.out.println();
+			}
+		//	auto.player.setLocation(new Point3D(32.10324747663552,35.20376771528262));
+		//	play.setInitLocation(32.10324747663552,35.20376771528262);
+			auto.setstart();
+			ArrayList<String>s=new ArrayList<String>();
+			play.start();
+			s=auto.closestFruit(auto.player.getLocation(), auto.player.getVeloctiy());
+			for(int i=0;i<s.size();i++) {
+				//System.out.print(","+shortestPath.get(i));
+				System.out.print(s.get(i)+",");
+				System.out.println();
+
+			}
+			System.out.println();
 		//	ArrayList<Point3D []> boxes=auto.boxinfo.boxes;
 		//	auto.startgame();
 
-
+	*/	 
 
 		ArrayList<Point3D []> boxes= new ArrayList<Point3D []>() ;
 		Point3D a=new Point3D (290,190);;
@@ -62,7 +87,6 @@ public class Auto {
 
 		Point3D A = new Point3D(174, 429);
 		Point3D B = new Point3D(885, 134);
-
 		Boxinfo box=new Boxinfo(boxes);
 
 		/*for (Point3D point: box.points)
@@ -77,13 +101,15 @@ public class Auto {
 		System.out.println(true);
 
 		 */
-		//	box.addPointstoNeighbors(A, B);
-		/*	for (ArrayList<Point3D> current:box.neighbors) {
+		/*
+		box.addPointstoNeighbors(A, B);
+		for (ArrayList<Point3D> current:box.neighbors) {
 			for (Point3D point:current)
 				System.out.println(point.toString());
 			System.out.println();
-		}*/
-
+		}
+		*/
+		
 		Node tar=nextpoint(A,B,box);
 		ArrayList<String> shortestPath = tar.getPath();
 		System.out.println("***** Graph Demo for OOP_Ex4 *****");
@@ -95,6 +121,7 @@ public class Auto {
 			System.out.println();
 
 		}
+		 
 	}
 
 
@@ -197,7 +224,7 @@ public class Auto {
 		double distance=path.getDist();
 		double min=distance/velocity;
 		ArrayList<String> shortest=path.getPath();
-		shortest.set(0, shortest.get(shortest.size()-1)+","+ this.fruits.get(0).getId());
+		//	shortest.set(0, shortest.get(shortest.size()-1)+","+ this.fruits.get(0).getId());
 		double time=0;
 		for (String obj: this.play.getBoard()) {
 			data=obj.split(",");
@@ -215,13 +242,14 @@ public class Auto {
 				ArrayList<String> shortestPath=new ArrayList<String>(path.getPath());
 				// s=shortestPath.get(shortestPath.size()-1)+data[1];
 				//		shortestPath.get(shortestPath.size()-1).replaceAll(shortestPath.get(shortestPath.size()-1), shortestPath.get(shortestPath.size()-1)+","+data[1]);
-				shortestPath.set(shortestPath.size()-1, shortestPath.get(shortestPath.size()-1)+","+data[1]);
+				//	shortestPath.set(shortestPath.size()-1, shortestPath.get(shortestPath.size()-1)+","+data[1]);
 				distance=path.getDist();
 				time=distance/velocity;
 
 				if (time<=min) {
 					min=time;
-					shortest=shortestPath;
+					shortest.clear();
+					shortest.addAll(shortestPath);
 				}
 			}
 		}
@@ -233,18 +261,26 @@ public class Auto {
 
 	public static Node nextpoint(Point3D source , Point3D target, Boxinfo boxinfo) {
 		boxinfo.addPointstoNeighbors(source, target);
-		for (ArrayList<Point3D> current:boxinfo.neighbors) {
+		/*		for (ArrayList<Point3D> current:boxinfo.neighbors) {
 
 			for (Point3D point:current)
 				System.out.println(point.toString());
 			System.out.println();
 		}
+		 */
+		//boxinfo.points.add(0, source);
+		//	boxinfo.points.add(0, target);
 		Graph G = new Graph(); 
-		G.add(new Node(source.toString())); 
+		//G.add(new Node(source.toString())); 
+		Node startpoint=new Node(source.toString());
+		G.add(startpoint);
 		for (Point3D point:boxinfo.points) {
-			G.add(new Node(point.toString()));
+			Node current=new Node (point.toString());
+			G.add(current);
 		}
-		G.add(new Node(target.toString())); 
+		//G.add(new Node(target.toString())); 
+		Node end=new Node(target.toString());
+		G.add(end);
 		ArrayList<String []> paths = new ArrayList<String[]>();
 		//	paths.add(new String []{source.toString(),  source.toString()});
 		for (ArrayList<Point3D> points: boxinfo.neighbors) {
@@ -262,47 +298,9 @@ public class Auto {
 
 		Graph_Algo.dijkstra(G, source.toString());
 
-		//	System.out.println(G.getNodeByName(target.toString()));
-		//Node tar = G.getNodeByName(target.toString());
 		Node tar = G.getNodeByName(target.toString());
 		tar.getPath().add(target.toString());
-		/*
-		ArrayList<String> shortestPath = tar.getPath();
-		for(int i=0;i<shortestPath.size();i++) {
-			//System.out.print(","+shortestPath.get(i));
-			System.out.print(shortestPath.get(i)+",");
-			System.out.println();
-		}
-		/*
-	//	ArrayList<String> shortestPath = tar.getPath();
-		Graph finalG = new Graph(); 
-		G.add(new Node(target.toString())); 
-		for (int i=0 ;i<shortestPath.size()-1; i++){
-			String [] current= shortestPath.get(i).split(",");
-			String [] next= shortestPath.get(i+1).split(",");
-			finalG.addEdge(shortestPath.get(i), shortestPath.get(i+1),
-					MyCoords.distance3d(new Point3D (Double.parseDouble(current[0]),Double.parseDouble(current[1]))
-							,new Point3D (Double.parseDouble(next[0]),Double.parseDouble(next[1]))));
-		}
-		String [] current= shortestPath.get(shortestPath.size()-1).split(",");
-		//String [] next= target.toString().split(",");
-		finalG.addEdge(shortestPath.get(shortestPath.size()-1), target.toString(),
-				MyCoords.distance3d(new Point3D (Double.parseDouble(current[0]),Double.parseDouble(current[1]))
-						,target));
-
-
-			for(int i=1;i<shortestPath.size();i++) {
-				String[] previouspoint=shortestPath.get(i-1).split(",");
-				String[] nextpoint=shortestPath.get(i).split(",");
-				double[] azimuth_elevation_dist=MyCoords.azimuth_elevation_dist
-						(new Point3D (Double.parseDouble(previouspoint[0]),Double.parseDouble(previouspoint[1])), new Point3D (Double.parseDouble(nextpoint[0]),Double.parseDouble(nextpoint[1])));
-				play.rotate(azimuth_elevation_dist[0]);
-			}
-
-		Graph_Algo.dijkstra(finalG, source.toString());
-		 */
-		// tar = G.getNodeByName(target.toString());
-
+	
 		boxinfo.neighbors.remove(boxinfo.neighbors.size()-1);
 		boxinfo.neighbors.remove(boxinfo.neighbors.size()-1);
 		return tar;
@@ -319,25 +317,29 @@ public class Auto {
 	}
 
 	public static boolean blockedbybox(Point3D source , Point3D target, ArrayList<Point3D []> boxes) {
-		boolean ans=false;
+		boolean ans=true;
 		for (int i=0; i<boxes.size(); i++) {	
 			boolean flag=true;
-			/*	if ((boxes.get(i)[3].x()>target.x() && boxes.get(i)[3].x()> source.x()) || ( boxes.get(i)[2].x()< source.x() && boxes.get(i)[2].x()<target.x())) {
-				if (target.y()>boxes.get(i)[2].y() && source.y()>boxes.get(i)[2].y())
-					flag=false;
-				if (target.y()<boxes.get(i)[1].y() && source.y()<boxes.get(i)[1].y())
-					flag=false;
-			}
-			if((boxes.get(i)[3].y()<target.y() && boxes.get(i)[3].y()<source.y() )||  ( boxes.get(i)[0].y()>source.y() && boxes.get(i)[0].y()>target.y())) {
-				if (target.x()<boxes.get(i)[0].x() && source.x()<boxes.get(i)[0].x())
-					flag=false;
-				if (target.x()>boxes.get(i)[2].x() && source.x()>boxes.get(i)[2].x())
-					flag=false;
-			}*/
+	
 			if ((boxes.get(i)[3].x()>target.x() && boxes.get(i)[3].x()> source.x()) || ( boxes.get(i)[2].x()< source.x() && boxes.get(i)[2].x()<target.x()))
 				flag=false;
 			if((boxes.get(i)[3].y()<target.y() && boxes.get(i)[3].y()<source.y() )||  ( boxes.get(i)[0].y()>source.y() && boxes.get(i)[0].y()>target.y()))
 				flag=false;
+			
+			if (boxes.get(i)[1].x()<source.x() && boxes.get(i)[1].y()>source.y() ) 
+				if (target.equals(boxes.get(i)[0]) || target.equals(boxes.get(i)[1]) || target.equals(boxes.get(i)[2]))
+					flag=false;
+			if (boxes.get(i)[3].x()>source.x() && boxes.get(i)[3].y()<source.y() ) 
+				if (target.equals(boxes.get(i)[0]) || target.equals(boxes.get(i)[3]) || target.equals(boxes.get(i)[2]))
+					flag=false;
+			if (boxes.get(i)[0].x()>source.x() && boxes.get(i)[0].y()>source.y() ) 
+				if (target.equals(boxes.get(i)[0]) || target.equals(boxes.get(i)[1]) || target.equals(boxes.get(i)[3]))
+					flag=false;
+			if (boxes.get(i)[2].x()<source.x() && boxes.get(i)[2].y()<source.y() ) 
+				if (target.equals(boxes.get(i)[1]) || target.equals(boxes.get(i)[3]) || target.equals(boxes.get(i)[2]))
+					flag=false;
+
+
 			if(flag) {
 				ans= pathcutbybox(source, target, boxes.get(i));
 				if (!ans)
@@ -347,44 +349,26 @@ public class Auto {
 		return ans;
 	}
 
+
 	public static boolean pathcutbybox(Point3D source, Point3D target,Point3D [] box) {
-		double Incline=(source.y()-target.y())/(source.x()-target.x());
-		boolean flag;
+		double incline=(source.y()-target.y())/(source.x()-target.x());
+		double y,x;
 
-		double y=(box[0].x()-source.x())*Incline+source.y();
-		/*
-		if (y>=box[0].y() && y<=box[3].y())
-			return false; 
-		y=(box[1].x()-source.x())*Incline+source.y();
-		if (y>=box[1].y() && y<=box[2].y())
-			return false;
-		if (Incline!=0) {
-		double x=(box[0].y()-source.y())/Incline+source.x();
-		if (x<=box[1].x() && x>=box[0].x())
-			return false;
-		x=(box[3].y()-source.y())/Incline+source.x();
-		if (x<=box[2].x() && x>=box[3].x())
-			return false;
-		}
-
-		 */
-		if (Incline==1)
-			return false;
+		y=(box[0].x()-source.x())*incline+source.y();
 		if (y>box[0].y() && y<box[3].y())
-			return false; 
-		y=(box[1].x()-source.x())*Incline+source.y();
+			return false;
+		y=(box[1].x()-source.x())*incline+source.y();
 		if (y>box[1].y() && y<box[2].y())
 			return false;
-		double x=(box[0].y()-source.y())/Incline+source.x();
-		if (x<box[1].x() && x>box[0].x())
+		x=(box[0].y()-source.y())/incline+source.x();
+		if (x>box[0].x() && x<box[1].x())
 			return false;
-		x=(box[3].y()-source.y())/Incline+source.x();
-		if (x<box[2].x() && x>box[3].x())
+		x=(box[3].y()-source.y())/incline+source.x();
+		if (x>box[3].x() && x<box[2].x())
 			return false;
 
 		return true;
 	}
-
 	public Play getPlay() {
 		return play;
 	}
